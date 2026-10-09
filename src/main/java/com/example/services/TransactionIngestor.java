@@ -24,23 +24,7 @@ public class TransactionIngestor {
 
             while((line = bufferedReader.readLine()) !=null && counter < 1000){
                 String[] object= line.split(",");
-                transactions.add(new TransactionDTO(
-                        Integer.parseInt(object[0]),
-                        TransactionType.valueOf(object[1].trim().toUpperCase()),
-                        new BigDecimal(object[2]),
-                        new CustomerDTO(
-                                object[3],
-                                new BigDecimal(object[4]),
-                                new BigDecimal(object[5])
-                        ),
-                        new CustomerDTO(
-                                object[6],
-                                new BigDecimal(object[7]),
-                                new BigDecimal(object[8])
-                        ),
-                        "1".equals(object[9].trim()),
-                        "1".equals(object[10].trim())
-                ));
+                parseTransaction(object);
                 counter++;
             }
 
@@ -49,5 +33,25 @@ public class TransactionIngestor {
         }
         return transactions;
 
+    }
+
+    private static void parseTransaction(String[] object) {
+        transactions.add(new TransactionDTO(
+                Integer.parseInt(object[0]),
+                TransactionType.valueOf(object[1].trim().toUpperCase()),
+                new BigDecimal(object[2]),
+                new CustomerDTO(
+                        object[3],
+                        new BigDecimal(object[4]),
+                        new BigDecimal(object[5])
+                ),
+                new CustomerDTO(
+                        object[6],
+                        new BigDecimal(object[7]),
+                        new BigDecimal(object[8])
+                ),
+                "1".equals(object[9].trim()),
+                "1".equals(object[10].trim())
+        ));
     }
 }
