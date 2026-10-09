@@ -8,6 +8,8 @@ import com.example.services.TransactionIngestor;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 
+import static com.example.services.TransactionIngestor.transactions;
+
 
 public class Main {
     static void main() throws Exception {
@@ -23,9 +25,11 @@ public class Main {
                 new CustomerDTO("C553264065", new BigDecimal("0.0"), new BigDecimal("0.0")),
                 true, false);
 
-        IO.println(transaction1);
-        IO.println(transaction2);
+//        IO.println(transaction1);
+//        IO.println(transaction2);
 
         var firtThousandLines = TransactionIngestor.readTransactions(Path.of("data", "PS_20174392719_1491204439457_log.csv"));
+        transactions.subList(0, Math.min(10, transactions.size())).forEach(System.out::println);
+
     }
 }
