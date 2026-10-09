@@ -29,7 +29,7 @@ public class Main {
 //        IO.println(transaction2);
 
         var firtThousandLines = TransactionIngestor.readTransactions(Path.of("data", "PS_20174392719_1491204439457_log.csv"));
-        transactions.subList(0, Math.min(10, transactions.size())).forEach(System.out::println);
+        transactions.stream().limit(10).forEach(IO::println);
 
     }
 }
