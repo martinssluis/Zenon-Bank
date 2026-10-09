@@ -3,12 +3,14 @@ package com.example;
 import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
+import com.example.services.TransactionIngestor;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 
 
 public class Main {
-    static void main() {
+    static void main() throws Exception {
 
         var transaction1 = new TransactionDTO(1, TransactionType.PAYMENT, new BigDecimal("1864.28"),
                 new CustomerDTO("C1666544295", new BigDecimal("21249.0"), new BigDecimal("19384.72")),
@@ -23,5 +25,7 @@ public class Main {
 
         IO.println(transaction1);
         IO.println(transaction2);
+
+        var firtThousandLines = TransactionIngestor.readTransactions(Path.of("data", "PS_20174392719_1491204439457_log.csv"));
     }
 }
