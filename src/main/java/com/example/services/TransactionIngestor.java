@@ -13,8 +13,9 @@ import java.util.List;
 
 public class TransactionIngestor {
 
+    public static List<TransactionDTO> transactions = new ArrayList<>();
+
     public static List<TransactionDTO> readTransactions(Path fileName)throws Exception{
-        List<TransactionDTO> transactions = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName.toFile()))) {
 
             int counter=0;
@@ -41,7 +42,6 @@ public class TransactionIngestor {
                         "1".equals(object[10].trim())
                 ));
                 counter++;
-                transactions.subList(0, Math.min(10, transactions.size())).forEach(System.out::println);
             }
 
         }catch (NullPointerException exception){
