@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class TransactionIngestor {
 
@@ -19,6 +20,8 @@ public class TransactionIngestor {
                     .skip(1)
                     .limit(1000)
                     .map(this::parseTransaction)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .toList();
 
         } catch (Exception exception) {
@@ -26,20 +29,42 @@ public class TransactionIngestor {
         }
     }
 
-    private  TransactionDTO parseTransaction(String line) {
-        String[] chunks = line.split(",");
+    private Optional<TransactionDTO> parseTransaction(String line) {
+        try {
+            String[] chunks = line.split(",");
 
-        int step = Integer.parseInt(chunks[0]);
-        TransactionType type = TransactionType.valueOf(chunks[1]);
+            int step = Integer.parseInt(chunks[0]);
+            TransactionType type = TransactionType.valueOf(chunks[1]);
 
-        BigDecimal amount = new BigDecimal(chunks[2]);
+            BigDecimal amount = parseBigDecimal(chunks[2], "amount");
 
-        var origin = new CustomerDTO(chunks[3], new BigDecimal(chunks[4]), new BigDecimal(chunks[5]));
-        var recipient = new CustomerDTO(chunks[6], new BigDecimal(chunks[7]), new BigDecimal(chunks[8]));
+            var origin = new CustomerDTO(chunks[3],
+                    parseBigDecimal(chunks[7], "oldBalanceOrig"),
+                    parseBigDecimal(chunks[8], "newBalanceOrig"));
 
-        boolean isFraud = "1".equals(chunks[9]);
-        boolean isFlaggedFraud = "1".equals(chunks[10]);
+            var recipient = new CustomerDTO(chunks[6],
+                    parseBigDecimal(chunks[7], "oldBalanceDest"),
+                    parseBigDecimal(chunks[8], "newBalanceDest"));
 
-        return new TransactionDTO(step, type, amount, origin, recipient, isFraud, isFlaggedFraud);
+            boolean isFraud = "1".equals(chunks[9]);
+            boolean isFlaggedFraud = "1".equals(chunks[10]);
+
+            return Optional.of(new TransactionDTO(step, type, amount, origin, recipient, isFraud, isFlaggedFraud));
+        } catch (Exception e) {
+            System.err.println("Erro ao fazer parse: " + line + " | " + e);
+        }
+        return Optional.empty();
+
+    }
+
+    private BigDecimal parseBigDecimal(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("O valor de " + fieldName + " não pode ser nulo nem vazio");
+        }
+        try {
+            return new BigDecimal(value.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("O valor de " + fieldName + " não é um número válido: " + value, e);
+        }
     }
 }
