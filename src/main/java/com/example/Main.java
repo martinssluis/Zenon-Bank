@@ -6,9 +6,7 @@ import com.example.enums.TransactionType;
 import com.example.services.TransactionIngestor;
 
 import java.math.BigDecimal;
-import java.nio.file.Path;
-
-import static com.example.services.TransactionIngestor.transactions;
+import java.util.List;
 
 
 public class Main {
@@ -28,8 +26,11 @@ public class Main {
 //        IO.println(transaction1);
 //        IO.println(transaction2);
 
-        var firtThousandLines = TransactionIngestor.readTransactions(Path.of("data", "PS_20174392719_1491204439457_log.csv"));
+        var transactionIngestor = new TransactionIngestor();
+        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
         transactions.stream().limit(10).forEach(IO::println);
 
+        }
+
     }
-}
+
