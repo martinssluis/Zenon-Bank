@@ -4,54 +4,42 @@ import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionIngestor {
 
-    public static List<TransactionDTO> transactions = new ArrayList<>();
+    public List<TransactionDTO> readTransactions(String fileName) {
+        Path path = Path.of(fileName);
+        try {
+            List<String> lines = Files.readAllLines(path);
+            return lines.stream()
+                    .skip(1)
+                    .limit(1000)
+                    .map(this::parseTransaction)
+                    .toList();
 
-    public static List<TransactionDTO> readTransactions(Path fileName)throws Exception{
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName.toFile()))) {
-
-            int counter=0;
-            String firstLine = bufferedReader.readLine();
-            String line;
-
-            while((line = bufferedReader.readLine()) !=null && counter < 1000){
-                String[] object= line.split(",");
-                parseTransaction(object);
-                counter++;
-            }
-
-        }catch (NullPointerException exception){
-            throw new RuntimeException("The file could not be found");
+        } catch (Exception exception) {
+            throw new RuntimeException("The file could not be found: " + fileName, exception);
         }
-        return transactions;
-
     }
 
-    private static void parseTransaction(String[] object) {
-        transactions.add(new TransactionDTO(
-                Integer.parseInt(object[0]),
-                TransactionType.valueOf(object[1].trim().toUpperCase()),
-                new BigDecimal(object[2]),
-                new CustomerDTO(
-                        object[3],
-                        new BigDecimal(object[4]),
-                        new BigDecimal(object[5])
-                ),
-                new CustomerDTO(
-                        object[6],
-                        new BigDecimal(object[7]),
-                        new BigDecimal(object[8])
-                ),
-                "1".equals(object[9].trim()),
-                "1".equals(object[10].trim())
-        ));
+    private  TransactionDTO parseTransaction(String line) {
+        String[] chunks = line.split(",");
+
+        int step = Integer.parseInt(chunks[0]);
+        TransactionType type = TransactionType.valueOf(chunks[1]);
+
+        BigDecimal amount = new BigDecimal(chunks[2]);
+
+        var origin = new CustomerDTO(chunks[3], new BigDecimal(chunks[4]), new BigDecimal(chunks[5]));
+        var recipient = new CustomerDTO(chunks[6], new BigDecimal(chunks[7]), new BigDecimal(chunks[8]));
+
+        boolean isFraud = "1".equals(chunks[9]);
+        boolean isFlaggedFraud = "1".equals(chunks[10]);
+
+        return new TransactionDTO(step, type, amount, origin, recipient, isFraud, isFlaggedFraud);
     }
 }
