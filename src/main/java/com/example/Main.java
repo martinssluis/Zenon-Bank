@@ -27,10 +27,14 @@ public class Main {
 //        IO.println(transaction2);
 
         var transactionIngestor = new TransactionIngestor();
-        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
-        transactions.stream().limit(10).forEach(IO::println);
+//        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
+//        transactions.stream().limit(10).forEach(IO::println);
 
-        }
+        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
+        IO.println(transactionsBadData.size());
+        transactionsBadData.forEach(IO::println);
+
+    }
 
     }
 
