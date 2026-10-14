@@ -36,6 +36,7 @@ public class TransactionIngestor {
             int step = Integer.parseInt(chunks[0]);
             TransactionType type = TransactionType.valueOf(chunks[1]);
 
+
             BigDecimal amount = parseBigDecimal(chunks[2], "amount");
 
             var origin = new CustomerDTO(chunks[3],
