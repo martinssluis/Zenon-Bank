@@ -3,10 +3,13 @@ package com.example;
 import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
+import com.example.services.FraudAnalyzer;
 import com.example.services.TransactionIngestor;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -27,14 +30,40 @@ public class Main {
 //        IO.println(transaction2);
 
         var transactionIngestor = new TransactionIngestor();
-//        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
+        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
 //        transactions.stream().limit(10).forEach(IO::println);
 
-        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
-        IO.println(transactionsBadData.size());
-        transactionsBadData.forEach(IO::println);
+//        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
+//        IO.println(transactionsBadData.size());
+//        transactionsBadData.forEach(IO::println);
+        var fraudAnalyzer = new FraudAnalyzer();
+        List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
+        IO.println("1. Total de Fraudes: " + fraudeulentTransactions.size());
+
+        IO.println("2. Top 3 Faudes de Maior Valor:");
+        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+                .map(TransactionDTO::amount)
+                .map(BigDecimal::toPlainString)
+                .limit(3)
+                .forEach(IO::println);
+
+        IO.println("3. Clientes Suspeitos:");
+        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+                .map(TransactionDTO::origin)
+                .map(CustomerDTO::name)
+                .distinct()
+                .limit(5)
+                .forEach(System.out::println);
+
+        IO.println("4. Prejuízo Total: " + fraudAnalyzer.totalLoss(fraudAnalyzer, fraudeulentTransactions));
+
+        IO.println("5. Fraudes por Tipo:");
+        fraudeulentTransactions.stream()
+                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
+                .forEach((type, count)-> IO.println(type + ":" +count));
+
 
     }
 
-    }
+}
 
