@@ -44,7 +44,16 @@ public class Main {
         fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
                 .map(TransactionDTO::amount)
                 .map(BigDecimal::toPlainString)
+                .limit(3)
                 .forEach(IO::println);
+
+        IO.println("3. Clientes Suspeitos:");
+        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+                .map(TransactionDTO::origin)
+                .map(CustomerDTO::name)
+                .distinct()
+                .limit(5)
+                .forEach(System.out::println);
 
     }
 
