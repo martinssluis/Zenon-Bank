@@ -57,6 +57,12 @@ public class Main {
 
         IO.println("4. Prejuízo Total: " + fraudAnalyzer.totalLoss(fraudAnalyzer, fraudeulentTransactions));
 
+        IO.println("5. Fraudes por Tipo:");
+        fraudeulentTransactions.stream()
+                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
+                .forEach((type, count)-> IO.println(type + ":" +count));
+
+
     }
 
 }
