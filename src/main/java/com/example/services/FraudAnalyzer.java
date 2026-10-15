@@ -17,7 +17,7 @@ public class FraudAnalyzer {
 
     public static List<TransactionDTO> biggestFrauds(List<TransactionDTO> fraudeulentTransactions) {
         return fraudeulentTransactions.stream()
-                .sorted(Comparator.comparing(TransactionDTO::amount))
+                .sorted(Comparator.comparing(TransactionDTO::amount).reversed())
                 .limit(3)
                 .toList();
     }
