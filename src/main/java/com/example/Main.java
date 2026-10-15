@@ -55,6 +55,8 @@ public class Main {
                 .limit(5)
                 .forEach(System.out::println);
 
+        IO.println("4. Prejuízo Total: " + fraudAnalyzer.totalLoss(fraudAnalyzer, fraudeulentTransactions));
+
     }
 
 }
