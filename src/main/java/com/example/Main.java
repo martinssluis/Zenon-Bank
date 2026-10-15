@@ -3,9 +3,11 @@ package com.example;
 import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
+import com.example.services.FraudAnalyzer;
 import com.example.services.TransactionIngestor;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -27,14 +29,18 @@ public class Main {
 //        IO.println(transaction2);
 
         var transactionIngestor = new TransactionIngestor();
-//        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
+        List<TransactionDTO> transactions = transactionIngestor.readTransactions("data/PS_20174392719_1491204439457_log.csv");
 //        transactions.stream().limit(10).forEach(IO::println);
 
-        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
-        IO.println(transactionsBadData.size());
-        transactionsBadData.forEach(IO::println);
+//        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
+//        IO.println(transactionsBadData.size());
+//        transactionsBadData.forEach(IO::println);
+        var fraudAnalyzer = new FraudAnalyzer();
+        List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
+        IO.println(fraudeulentTransactions.size());
+
 
     }
 
-    }
+}
 
