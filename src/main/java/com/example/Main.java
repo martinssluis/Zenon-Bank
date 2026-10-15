@@ -40,7 +40,11 @@ public class Main {
         List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
         IO.println("1. Total de Fraudes: " + fraudeulentTransactions.size());
 
-        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).forEach(IO::println);
+        IO.println("2. Top 3 Faudes de Maior Valor:");
+        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+                .map(TransactionDTO::amount)
+                .map(BigDecimal::toPlainString)
+                .forEach(IO::println);
 
     }
 
