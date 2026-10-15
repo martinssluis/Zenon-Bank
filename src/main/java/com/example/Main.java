@@ -9,6 +9,7 @@ import com.example.services.TransactionIngestor;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -37,8 +38,9 @@ public class Main {
 //        transactionsBadData.forEach(IO::println);
         var fraudAnalyzer = new FraudAnalyzer();
         List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
-        IO.println(fraudeulentTransactions.size());
+        IO.println("1. Total de Fraudes: " + fraudeulentTransactions.size());
 
+        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).forEach(IO::println);
 
     }
 
