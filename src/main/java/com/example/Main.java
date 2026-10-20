@@ -63,11 +63,15 @@ public class Main {
 
         TransactionListRepository transactionListRepository = new TransactionListRepository();
         String client = "C1231006815";
+        long ini, fim;
+        ini = System.nanoTime();
         transactionListRepository.getTransactionByOriginClientName(transactions, client)
                 .ifPresentOrElse(
                         IO::println,
                         () -> IO.println("Transacação não encontrada para o cliente " + client));
 
+        fim = System.nanoTime();
+        System.out.println("Tempo de execução: " + (fim-ini) + "ms");
     }
 
 }
