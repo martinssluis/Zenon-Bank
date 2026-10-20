@@ -3,13 +3,12 @@ package com.example;
 import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
-import com.example.services.FraudAnalyzer;
+import com.example.model.TransactionList;
+import com.example.model.TransactionMap;
+import com.example.repository.TransactionListRepository;
 import com.example.services.TransactionIngestor;
-
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class Main {
@@ -36,33 +35,46 @@ public class Main {
 //        List<TransactionDTO> transactionsBadData = transactionIngestor.readTransactions("data/paysim_with_bad_data.csv");
 //        IO.println(transactionsBadData.size());
 //        transactionsBadData.forEach(IO::println);
-        var fraudAnalyzer = new FraudAnalyzer();
-        List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
-        IO.println("1. Total de Fraudes: " + fraudeulentTransactions.size());
+//        var fraudAnalyzer = new FraudAnalyzer();
+//        List<TransactionDTO>fraudeulentTransactions = fraudAnalyzer.analyzeFrauds(transactions);
+//        IO.println("1. Total de Fraudes: " + fraudeulentTransactions.size());
+//
+//        IO.println("2. Top 3 Faudes de Maior Valor:");
+//        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+//                .map(TransactionDTO::amount)
+//                .map(BigDecimal::toPlainString)
+//                .limit(3)
+//                .forEach(IO::println);
+//
+//        IO.println("3. Clientes Suspeitos:");
+//        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
+//                .map(TransactionDTO::origin)
+//                .map(CustomerDTO::name)
+//                .distinct()
+//                .limit(5)
+//                .forEach(System.out::println);
+//
+//        IO.println("4. Prejuízo Total: " + fraudAnalyzer.totalLoss(fraudAnalyzer, fraudeulentTransactions));
+//
+//        IO.println("5. Fraudes por Tipo:");
+//        fraudeulentTransactions.stream()
+//                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
+//                .forEach((type, count)-> IO.println(type + ":" +count));
 
-        IO.println("2. Top 3 Faudes de Maior Valor:");
-        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
-                .map(TransactionDTO::amount)
-                .map(BigDecimal::toPlainString)
-                .limit(3)
-                .forEach(IO::println);
+        String client = "C1231006815";
 
-        IO.println("3. Clientes Suspeitos:");
-        fraudAnalyzer.biggestFrauds(fraudeulentTransactions).stream()
-                .map(TransactionDTO::origin)
-                .map(CustomerDTO::name)
-                .distinct()
-                .limit(5)
-                .forEach(System.out::println);
+        compare("List", new TransactionList(transactions), client);
+        compare("Map", new TransactionMap(transactions), client);
+    }
 
-        IO.println("4. Prejuízo Total: " + fraudAnalyzer.totalLoss(fraudAnalyzer, fraudeulentTransactions));
-
-        IO.println("5. Fraudes por Tipo:");
-        fraudeulentTransactions.stream()
-                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
-                .forEach((type, count)-> IO.println(type + ":" +count));
-
-
+    private static void compare(String label, TransactionListRepository repository, String client) {
+        long ini = System.nanoTime();
+        repository.getTransactionByOriginClientName(client)
+                .ifPresentOrElse(
+                        IO::println,
+                        () -> IO.println("Transacação não encontrada para o cliente " + client));
+        long fim = System.nanoTime();
+        System.out.println(label + " - Tempo de busca: " + (fim - ini) + "ns");
     }
 
 }
