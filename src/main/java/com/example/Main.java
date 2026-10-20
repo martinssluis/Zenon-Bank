@@ -3,12 +3,10 @@ package com.example;
 import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
-import com.example.model.TransactionListRepository;
-import com.example.services.FraudAnalyzer;
+import com.example.model.TransactionList;
 import com.example.services.TransactionIngestor;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class Main {
@@ -61,17 +59,18 @@ public class Main {
 //                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
 //                .forEach((type, count)-> IO.println(type + ":" +count));
 
-        TransactionListRepository transactionListRepository = new TransactionListRepository();
+        TransactionList transactionList = new TransactionList();
         String client = "C1231006815";
         long ini, fim;
         ini = System.nanoTime();
-        transactionListRepository.getTransactionByOriginClientName(transactions, client)
+        transactionList.getTransactionByOriginClientName(transactions, client)
                 .ifPresentOrElse(
                         IO::println,
                         () -> IO.println("Transacação não encontrada para o cliente " + client));
 
         fim = System.nanoTime();
         System.out.println("Tempo de execução: " + (fim-ini) + "ms");
+        //tempo medio
     }
 
 }
