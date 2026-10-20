@@ -4,6 +4,8 @@ import com.example.dto.CustomerDTO;
 import com.example.dto.TransactionDTO;
 import com.example.enums.TransactionType;
 import com.example.model.TransactionList;
+import com.example.model.TransactionMap;
+import com.example.repository.TransactionListRepository;
 import com.example.services.TransactionIngestor;
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,18 +61,20 @@ public class Main {
 //                .collect(Collectors.groupingBy(TransactionDTO::type, Collectors.counting()))
 //                .forEach((type, count)-> IO.println(type + ":" +count));
 
-        TransactionList transactionList = new TransactionList();
         String client = "C1231006815";
-        long ini, fim;
-        ini = System.nanoTime();
-        transactionList.getTransactionByOriginClientName(transactions, client)
+
+        compare("List", new TransactionList(transactions), client);
+        compare("Map", new TransactionMap(transactions), client);
+    }
+
+    private static void compare(String label, TransactionListRepository repository, String client) {
+        long ini = System.nanoTime();
+        repository.getTransactionByOriginClientName(client)
                 .ifPresentOrElse(
                         IO::println,
                         () -> IO.println("Transacação não encontrada para o cliente " + client));
-
-        fim = System.nanoTime();
-        System.out.println("Tempo de execução: " + (fim-ini) + "ms");
-        //tempo medio
+        long fim = System.nanoTime();
+        System.out.println(label + " - Tempo de busca: " + (fim - ini) + "ns");
     }
 
 }
